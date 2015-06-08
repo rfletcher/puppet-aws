@@ -34,7 +34,9 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def self.route_to_hash(region, route)
-    gateway_name = route.state == 'active' ? gateway_name_from_id(region, route.gateway_id) : nil
+    if route.state == 'active' && !route.gateway_id.nil?
+      gateway_name = gateway_name_from_id(region, route.gateway_id)
+    end
     hash = {
       'destination_cidr_block' => route.destination_cidr_block,
       'gateway' => gateway_name,
